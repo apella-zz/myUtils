@@ -15,6 +15,26 @@ static void vectorTodim3(const std::vector<int> &v,
   d.z = v[2];
 }
 
+/* copied from the Cuda code samples */
+bool checkCUDAProfile(int dev, int min_runtime, int min_compute) {
+  int runtimeVersion = 0;
+
+  cudaDeviceProp deviceProp;
+  cudaGetDeviceProperties(&deviceProp, dev);
+
+  fprintf(stderr,"\nDevice %d: \"%s\"\n", dev, deviceProp.name);
+  cudaRuntimeGetVersion(&runtimeVersion);
+  fprintf(stderr,"  CUDA Runtime Version     :\t%d.%d\n", runtimeVersion/1000, (runtimeVersion%100)/10);
+  fprintf(stderr,"  CUDA Compute Capability  :\t%d.%d\n", deviceProp.major, deviceProp.minor);
+
+  if (runtimeVersion >= min_runtime && ((deviceProp.major<<4) + deviceProp.minor) >= min_compute) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
 static void displayDeviceInfo() {
   cudaDeviceProp prop;
   int iDev;
