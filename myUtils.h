@@ -7,6 +7,9 @@
 
 typedef unsigned int uint;
 
+// output for debug purposes, always to the command line
+#define dout std::stderr
+
 #define myCalloc(name, type, size)           \
   name = (type) calloc(size, sizeof(type) ); \
   if (!name)                                 \
@@ -29,6 +32,7 @@ void writeArray(const T *arr, int size, std::ostream &out, char delimiter = '\n'
       out  << arr[i] << delimiter;
   }
 }
+
 
 static void copyBackAndWrite(int *arr, const int *gpuArr, int size, const char *filename) {
   cudaMemcpy(arr, gpuArr, sizeof(int)*size, cudaMemcpyDeviceToHost);
