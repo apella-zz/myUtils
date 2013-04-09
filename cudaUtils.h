@@ -6,6 +6,22 @@
 
 #include "cudaMemBlock.hpp"
 
+// printf() is only supported
+// for devices of compute capability 2.0 and higher
+#if defined(__CUDA_ARCH__) && (__CUDA_ARCH__ < 200)
+   #define printf(f, ...) ((void)(f, __VA_ARGS__),0)
+#endif
+
+#define SAFEWRITE(array, index, maxsize, value)                 \
+  do {                                                          \
+      if (index < maxsize)                                      \
+        array[index] = value;                                   \
+      else                                                      \
+        printf("%s: index %d was out of bounds (max %d\n",      \
+               __FUNCTION__, index, maxsize);                   \
+  } while (false)
+  
+
 static void vectorTodim3(const std::vector<int> &v,
                   dim3 &d) {
   if (v.size() < 3)
