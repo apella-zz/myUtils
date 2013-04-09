@@ -12,6 +12,7 @@ template<class T>
 class cudaMemBlock {
 public:
   T *mem, *host;
+
   unsigned int size;
   /* if the user has defined the host, the user is responsible for
      cleaning it up, not us */
@@ -19,10 +20,10 @@ public:
   cudaMemBlock(unsigned int Size):
     mem(0), host(0), size(Size), userDefinedHost(false) {
     checkCudaErrors(cudaMalloc( (void**) &mem, size*sizeof(T) ));
-    
+    //host = new T[size];
+    host = (T*)malloc(size*sizeof(T));
     //host = (T *) calloc( size, sizeof(T) );
-    host = new T[size];
-    //memset(host,0,size);
+    memset(host,0,size);
   }
   cudaMemBlock(unsigned int Size, T *Host):
       mem(0), host(Host), size(Size),  userDefinedHost(true) {
@@ -30,19 +31,21 @@ public:
   }
 
   virtual ~cudaMemBlock() {
+    getLastCudaError("we made a mistake earlier!");
     checkCudaErrors(cudaFree(mem));
     if (!userDefinedHost) {
-      delete host;
+      //delete host;
+      free(host);
       host = 0;
     }
   }
 
   void memcpy(enum cudaMemcpyKind Kind) {
-    std::cerr << "called cudaMemBlock::memcpy(enum cudaMemcpyKind Kind)\n";
     this->memcpy(size, Kind);
   }
   /* Size: the size in number of elements, not in number of bytes! */
   void memcpy(int Size, enum cudaMemcpyKind Kind) {
+    getLastCudaError("we made a mistake earlier!");
     checkCudaErrors(cudaMemcpy( host, mem, Size * sizeof(T), Kind));
   }
 
