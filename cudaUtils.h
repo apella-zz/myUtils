@@ -75,7 +75,7 @@ static void displayDeviceInfo() {
   
 }
 
-static void chooseLatestGPU() {
+static void chooseLatestGPU(bool verbose=false) {
   int iDev, dev;
   cudaGetDeviceCount(&iDev);
   if (iDev > 1) {
@@ -98,7 +98,8 @@ static void chooseLatestGPU() {
     cudaSetDevice(maxDev);
     cudaDeviceProp p;
     cudaGetDeviceProperties(&p, maxDev);
-    std::cout << "chosen gpu: " << p.name << '\n';
+    if (verbose) {
+      std::cout << "chosen gpu: " << p.name << '\n';}
   }
 }
 static void quickCopy(cudaMemBlock<int>& block, const char *filename) {
