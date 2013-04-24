@@ -34,7 +34,7 @@ static void vectorTodim3(const std::vector<int> &v,
 /* copied from the Cuda code samples */
 bool checkCUDAProfile(int dev, int min_runtime, int min_compute) {
   int runtimeVersion = 0;
-
+  
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, dev);
 
@@ -42,7 +42,7 @@ bool checkCUDAProfile(int dev, int min_runtime, int min_compute) {
   cudaRuntimeGetVersion(&runtimeVersion);
   fprintf(stderr,"  CUDA Runtime Version     :\t%d.%d\n", runtimeVersion/1000, (runtimeVersion%100)/10);
   fprintf(stderr,"  CUDA Compute Capability  :\t%d.%d\n", deviceProp.major, deviceProp.minor);
-
+  
   if (runtimeVersion >= min_runtime && ((deviceProp.major<<4) + deviceProp.minor) >= min_compute) {
     return true;
   }
@@ -58,7 +58,9 @@ static void displayDeviceInfo() {
   cudaGetDeviceCount(&iDev);
   if ((unsigned int)iDev == 0) {
     std::cout << "There is no CUDA device found!";
+
     return;
+    
   }
   else {
     printf("There are %d CUDA devices in your computer. \n", iDev);

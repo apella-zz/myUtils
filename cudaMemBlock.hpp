@@ -6,8 +6,8 @@
  */
 #ifndef CUDAMEMBLOCK_HPP
 #define CUDAMEMBLOCK_HPP
-#include "cuda.h"
-#include "helper_cuda.h"
+#include <cuda.h>
+#include <helper_cuda.h>
 
 /* the data is public so that we can easily give it to cuda to work
    with. While this is a potential risk, the programmer is trusted as
@@ -32,10 +32,13 @@ public:
    *       responsible for clearing this memory.
    */
   cudaMemBlock(unsigned int Size, T *Host);
+  
 
   virtual ~cudaMemBlock();
   /**
-   * @brief Size: the size in number of elements, not in number of bytes!
+   * @brief Size: the size in number of elements, not in number of
+   * bytes!
+   * Kind: cudaMemcpyHostToDevice, cudaMemcpyDeviceToHost, ...
    */
   void memcpy(int Size, enum cudaMemcpyKind Kind);
   /* this will copy the whole block */
@@ -43,7 +46,11 @@ public:
 
   T& operator[](int n);
   const T& operator[](int n) const;
-  
+
+
+
+
+
 private:
   // make non-copyable
   cudaMemBlock( const cudaMemBlock&);
