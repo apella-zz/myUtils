@@ -90,9 +90,26 @@ void cudaMemBlock<T>::memcpy(enum cudaMemcpyKind Kind) {
 }
 
 template<class T>
-void cudaMemBlock<T>::memcpy(int Size, enum cudaMemcpyKind Kind) {
+void cudaMemBlock<T>::memcpy(int Size/*in nr of elements*/, enum cudaMemcpyKind Kind) {
   getLastCudaError("we made a mistake earlier!");
-  checkCudaErrors(cudaMemcpy( host, mem, Size * sizeof(T), Kind));
+  void *dst, *src;
+  switch(Kind) {
+    case cudaMemcpyDeviceToHost:
+      dst = host;
+      src = mem;
+      break;
+    case cudaMemcpyHostToDevice:
+      dst = mem;
+      src = host;
+      break;
+    default:
+      /* should not happen
+         TODO decide on way to notify the caller of failure.
+       */
+      
+      break;
+  }
+  checkCudaErrors(cudaMemcpy( dst, src, Size * sizeof(T), Kind));
 }
 
 template<class T>
