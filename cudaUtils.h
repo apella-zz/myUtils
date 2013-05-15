@@ -59,6 +59,10 @@ bool checkCUDAProfile(int dev, int min_runtime, int min_compute) {
   }
 }
 
+static int calcDimSize(const dim3 &dims) {
+  return dims.x * dims.y * dims.z;
+}
+
 static void displayDeviceInfo() {
   cudaDeviceProp prop;
   int iDev;
@@ -112,10 +116,28 @@ static void chooseLatestGPU(bool verbose=false) {
       std::cout << "chosen gpu: " << p.name << '\n';}
   }
 }
-static void quickCopy(cudaMemBlock<int>& block, const char *filename) {
-  copyBackAndWrite(block.host, block.mem, block.size, filename);
-}
-static void quickCopy(cudaMemBlock<int>& block, int size, const char *filename) {
-  copyBackAndWrite(block.host, block.mem, size, filename);
-}
+
+/**
+ * commented out, this is trivial stuff.
+ */
+/**
+ * copy an array of integers  back to host memory (already provided by the caller)
+ * and write it to a file.
+ * arr: the space in the host memory
+ * gpuArr: the array on the device
+ * size: the number of elements in the array
+ */
+// template<class T>
+// static void copyBackAndWrite(T *arr, const T *gpuArr, int size, const char *filename) {
+//   cudaMemcpy(arr, gpuArr, sizeof(T)*size, cudaMemcpyDeviceToHost);
+//   writeArray(arr, size, filename);
+// }
+
+// template<class T>
+// static void quickCopy(cudaMemBlock<int>& block, const char *filename) {
+//   copyBackAndWrite(block.host, block.mem, block.size, filename);
+// }
+// static void quickCopy(cudaMemBlock<int>& block, int size, const char *filename) {
+//   copyBackAndWrite(block.host, block.mem, size, filename);
+// }
 #endif /* _CUDAUTILS_H_ */

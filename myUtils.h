@@ -15,16 +15,10 @@ typedef unsigned int uint;
   if (!name)                                 \
     printf("Memory allocation failure\n")
 
-template<class T>
-void writeArray(const T *arr, int size, const char *filename, char delimiter = '\n') {
-  std::ofstream arrayData(filename);
-  for (int i = 0; i < size; ++i) {
-    if (arr[i] != -1)
-      //arrayData << "(" << i << ", " << arr[i] << ")" << delimiter;
-      arrayData << arr[i] << delimiter;
-  }
-}
-
+/**
+ * write out the array to a stream.
+ * 
+ */
 template<class T>
 void writeArray(const T *arr, int size, std::ostream &out, char delimiter = '\n') {
   for (int i = 0; i < size; ++i) {
@@ -33,14 +27,20 @@ void writeArray(const T *arr, int size, std::ostream &out, char delimiter = '\n'
   }
 }
 
-
-static void copyBackAndWrite(int *arr, const int *gpuArr, int size, const char *filename) {
-  cudaMemcpy(arr, gpuArr, sizeof(int)*size, cudaMemcpyDeviceToHost);
-  oprintf("array size = %i\n", size);
-  writeArray(arr, size, filename);
-  
+/**
+ * write out the data from an array.
+ * size is in number of elements
+ */
+template<class T>
+void writeArray(const T *arr, int size, const char *filename, char delimiter = '\n') {
+  std::ofstream out(filename);
+  writeArray(arr, size, out, delimiter);
 }
 
+
+/**
+ * calculate the total amount of elements in the given dimensions
+ */
 static int calcDimSize(int dims, const int *dimSizes)
 {
   int total = 1;
@@ -51,10 +51,11 @@ static int calcDimSize(int dims, const int *dimSizes)
   }
   return total;
 }
-static int calcDimSize(const dim3 &dims) {
-  return dims.x * dims.y * dims.z;
-}
 
+
+/**
+ * speaks for itself
+ */
 static bool isPow2(unsigned int x)
 {
     return ((x&(x-1))==0);
@@ -70,7 +71,9 @@ static unsigned int nextPow2( unsigned int x ) {
     x |= x >> 16;
     return ++x;
 }
-
+/**
+ * calculate the bandwidth used.
+ */
 static float bandwidthInMBs(int memSize, int transactions, float elapsedTimeInMs) {
   float bw = (1.e3f * memSize * (float)transactions) /
              (elapsedTimeInMs * (float)(1 << 20));
