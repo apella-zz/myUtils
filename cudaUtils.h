@@ -31,6 +31,14 @@ static void vectorTodim3(const std::vector<int> &v,
   d.z = v[2];
 }
 
+__device__ __host__
+static int determineDimension(dim3 vec){
+  if (vec.y == vec.z == 1) return 1;
+  if (vec.z == 1) return 2;
+  return 3;
+}
+
+
 /* copied from the Cuda code samples */
 bool checkCUDAProfile(int dev, int min_runtime, int min_compute) {
   int runtimeVersion = 0;
